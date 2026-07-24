@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      - LISTEN_ADDR=:8080
+      - KUBECONFIG=/tmp/kubeconfig
+      - EXTERNALDNS_NAMESPACE=external-dns
+      - EXTERNALDNS_DEPLOYMENT=external-dns
+      - CLUSTER_NAME=local
+      - DOMAIN_FILTER=example.com
+    volumes:
+      - ${KUBECONFIG:-~/.kube/config}:/tmp/kubeconfig:ro
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8088:8080"
+    depends_on:
+      - backend

@@ -1,0 +1,41 @@
+[data-theme="dns_night"] {
+  --bg: 10 14 23;
+  --bg-gradient-a: 56 189 248;
+  --bg-gradient-a-opacity: 0.18;
+  --bg-gradient-b: 99 102 241;
+  --bg-gradient-b-opacity: 0.14;
+
+  --fg: 241 245 249;
+  --fg-secondary: 226 232 240;
+  --muted: 148 163 184;
+  --subtle: 100 116 139;
+
+  --primary: 56 189 248;
+  --primary-hover: 125 211 252;
+  --primary-dark: 14 165 233;
+  --primary-soft: 56 189 248;
+  --primary-soft-opacity: 0.12;
+  --accent: 129 140 248;
+
+  --border: 255 255 255;
+  --border-opacity: 0.08;
+  --surface: 255 255 255;
+  --surface-opacity: 0.04;
+  --surface-hover-opacity: 0.06;
+  --surface-elevated-opacity: 0.08;
+
+  --glass-shadow: 0 0 0 1px rgba(56, 189, 248, 0.05), 0 4px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --glass-hover-shadow: 0 0 0 1px rgba(56, 189, 248, 0.15), 0 8px 40px rgba(56, 189, 248, 0.08),
+    0 4px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  --scrollbar: 56 189 248;
+  --scrollbar-opacity: 0.25;
+
+  --success: 52 211 153;
+  --danger: 251 113 133;
+  --warning: 251 191 36;
+
+  --btn-primary-gradient: linear-gradient(to right, rgb(14 165 233), rgb(56 189 248));
+  --btn-primary-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.25);
+}

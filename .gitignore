@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+dist/
+*.log
+
+# Go
+backend/bin/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Env
+.env
+.env.local
+
+# Build
+frontend/package-lock.json
