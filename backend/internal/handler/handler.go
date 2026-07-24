@@ -6,24 +6,35 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/konstpic/externaldns-web-ui/backend/internal/auth"
 	"github.com/konstpic/externaldns-web-ui/backend/internal/k8s"
 )
 
 type Handler struct {
-	k8s *k8s.Client
+	k8s  *k8s.Client
+	auth *auth.Service
 }
 
-func New(k *k8s.Client) *Handler {
-	return &Handler{k8s: k}
+func New(k *k8s.Client, authSvc *auth.Service) *Handler {
+	return &Handler{k8s: k, auth: authSvc}
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/health", h.health)
-	mux.HandleFunc("GET /api/v1/overview", h.overview)
-	mux.HandleFunc("GET /api/v1/records", h.records)
-	mux.HandleFunc("GET /api/v1/sources", h.sources)
-	mux.HandleFunc("GET /api/v1/controller", h.controller)
-	mux.HandleFunc("GET /api/v1/logs", h.logs)
+
+	protected := func(pattern string, fn http.HandlerFunc) {
+		mux.HandleFunc(pattern, auth.RequireAuth(h.auth, fn))
+	}
+	admin := func(pattern string, fn http.HandlerFunc) {
+		mux.HandleFunc(pattern, auth.RequireAdmin(h.auth, fn))
+	}
+
+	protected("GET /api/v1/overview", h.overview)
+	protected("GET /api/v1/records", h.records)
+	protected("GET /api/v1/sources", h.sources)
+	protected("GET /api/v1/controller", h.controller)
+	protected("GET /api/v1/logs", h.logs)
+	admin("GET /api/v1/admin/settings", h.adminSettings)
 }
 
 func (h *Handler) health(w http.ResponseWriter, _ *http.Request) {
@@ -83,6 +94,30 @@ func (h *Handler) logs(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{"items": data})
 }
 
+func (h *Handler) adminSettings(w http.ResponseWriter, _ *http.Request) {
+	cfg := h.auth.Config()
+	writeJSON(w, http.StatusOK, map[string]any{
+		"auth": map[string]any{
+			"auth_required": cfg.AuthRequired,
+			"oidc_enabled":  cfg.OIDCConfigured(),
+			"issuer_url":    strings.TrimRight(cfg.IssuerURL, "/"),
+			"client_id":     cfg.ClientID,
+			"redirect_url":  cfg.RedirectURL,
+			"scopes":        cfg.Scopes,
+			"role_claim":    cfg.RoleClaim,
+			"group_claim":   cfg.GroupClaim,
+			"admin_roles":   cfg.AdminRoles,
+			"frontend_url":  cfg.FrontendURL,
+		},
+		"app": map[string]any{
+			"cluster_name":           envOr("CLUSTER_NAME", ""),
+			"domain_filter":          envOr("DOMAIN_FILTER", ""),
+			"external_dns_namespace": envOr("EXTERNALDNS_NAMESPACE", "external-dns"),
+			"external_dns_deploy":    envOr("EXTERNALDNS_DEPLOYMENT", "external-dns"),
+		},
+	})
+}
+
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
@@ -91,4 +126,16 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 func writeError(w http.ResponseWriter, status int, err error) {
 	writeJSON(w, status, map[string]string{"error": err.Error()})
+}
+
+func envOr(key, fallback string) string {
+	if v := strings.TrimSpace(getenv(key)); v != "" {
+		return v
+	}
+	return fallback
+}
+
+func getenv(key string) string {
+	// small helper without importing os in every handler method
+	return lookupEnv(key)
 }

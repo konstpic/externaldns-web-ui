@@ -32,6 +32,38 @@ spec:
           env:
             - name: LISTEN_ADDR
               value: ":8080"
+            - name: AUTH_REQUIRED
+              value: {{ .Values.auth.required | quote }}
+            - name: FRONTEND_URL
+              value: {{ include "externaldns-web-ui.frontendUrl" . | quote }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.existingSecret | default (printf "%s-auth" (include "externaldns-web-ui.fullname" .)) }}
+                  key: JWT_SECRET
+            - name: OIDC_ENABLED
+              value: {{ .Values.auth.oidc.enabled | quote }}
+            - name: OIDC_ISSUER_URL
+              value: {{ .Values.auth.oidc.issuerUrl | quote }}
+            - name: OIDC_CLIENT_ID
+              value: {{ .Values.auth.oidc.clientId | quote }}
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.auth.existingSecret | default (printf "%s-auth" (include "externaldns-web-ui.fullname" .)) }}
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_REDIRECT_URL
+              value: {{ printf "%s/api/auth/callback" (include "externaldns-web-ui.frontendUrl" .) | quote }}
+            - name: OIDC_SCOPES
+              value: {{ .Values.auth.oidc.scopes | quote }}
+            - name: OIDC_ROLE_CLAIM
+              value: {{ .Values.auth.oidc.roleClaim | quote }}
+            - name: OIDC_GROUP_CLAIM
+              value: {{ .Values.auth.oidc.groupClaim | quote }}
+            - name: AUTHENTIK_PUBLIC_URL
+              value: {{ .Values.auth.oidc.authentikPublicUrl | quote }}
+            - name: ADMIN_ROLES
+              value: {{ .Values.auth.adminRoles | quote }}
             - name: EXTERNALDNS_NAMESPACE
               value: {{ .Values.externalDns.namespace | quote }}
             - name: EXTERNALDNS_DEPLOYMENT

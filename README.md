@@ -10,6 +10,34 @@
 - **Controller** — provider, policy, txt-owner-id, replicas, image
 - **Логи** — tail логов pod ExternalDNS
 
+## Аутентификация (Authentik OIDC)
+
+Все API endpoints `/api/v1/*` защищены JWT. Вход через Authentik OIDC:
+
+1. Пользователь нажимает «Войти через Authentik»
+2. Backend редиректит на IdP → callback `/api/auth/callback`
+3. Backend выдаёт JWT и редиректит на `/auth/callback?access_token=...`
+4. SPA сохраняет токены и загружает профиль через `/api/auth/me`
+
+### Переменные окружения (backend)
+
+| Variable | Описание |
+|----------|----------|
+| `JWT_SECRET` | Секрет для подписи JWT (**обязателен**) |
+| `OIDC_ISSUER_URL` | Authentik issuer, напр. `https://auth.example.com/application/o/externaldns-web-ui/` |
+| `OIDC_CLIENT_ID` | OAuth2 client ID |
+| `OIDC_CLIENT_SECRET` | OAuth2 client secret |
+| `FRONTEND_URL` | Public URL UI, напр. `https://externaldns.example.com` |
+| `AUTHENTIK_PUBLIC_URL` | Публичный URL Authentik (если issuer внутренний) |
+| `ADMIN_ROLES` | Группы/роли с доступом к `/admin/settings` |
+| `AUTH_REQUIRED` | `false` только для локальной разработки |
+
+### Локальная разработка без OIDC
+
+```bash
+AUTH_REQUIRED=false JWT_SECRET=dev-secret go run ./cmd/server
+```
+
 ## Архитектура
 
 ```

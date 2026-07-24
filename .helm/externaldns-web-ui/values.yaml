@@ -13,6 +13,22 @@ externalDns:
   namespace: external-dns
   deployment: external-dns
 
+auth:
+  required: true
+  frontendUrl: ""
+  existingSecret: externaldns-web-ui-auth
+  jwtSecret: ""
+  oidc:
+    enabled: true
+    issuerUrl: ""
+    clientId: externaldns-web-ui
+    clientSecret: ""
+    scopes: "openid profile email"
+    roleClaim: groups
+    groupClaim: groups
+    authentikPublicUrl: ""
+  adminRoles: "admin,super_admin,authentik Admins"
+
 backend:
   replicas: 1
   image:

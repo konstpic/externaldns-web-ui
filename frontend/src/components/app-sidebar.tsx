@@ -3,12 +3,16 @@ import {
   Activity,
   Globe,
   LayoutDashboard,
+  LogOut,
   Menu,
   Network,
   Server,
+  Settings,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebarStore } from "@/lib/sidebar-store";
+import { useAuthStore } from "@/lib/auth-store";
 
 const nav = [
   { to: "/", label: "Обзор", icon: LayoutDashboard },
@@ -21,6 +25,8 @@ const nav = [
 export function AppSidebar() {
   const expanded = useSidebarStore((s) => s.expanded);
   const toggle = useSidebarStore((s) => s.toggle);
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
 
   return (
     <>
@@ -74,8 +80,43 @@ export function AppSidebar() {
           ))}
         </nav>
 
-        <div className="hidden border-t border-border/10 p-2 md:block">
-          <button type="button" className="btn-secondary w-full !py-2" onClick={toggle}>
+        <div className="space-y-1 border-t border-border/10 p-2">
+          {user?.is_admin && (
+            <NavLink
+              to="/admin/settings"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary/15 text-primary"
+                    : "text-muted hover:bg-surface/10 hover:text-fg-secondary"
+                )
+              }
+            >
+              <Settings className="h-4 w-4 shrink-0" />
+              <span className={cn(!expanded && "md:sr-only")}>Настройки</span>
+            </NavLink>
+          )}
+          {user && (
+            <div className={cn("flex items-center gap-2 px-3 py-2", !expanded && "md:justify-center")}>
+              <User className="h-4 w-4 shrink-0 text-subtle" />
+              {expanded && (
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-medium text-fg-secondary">{user.display_name}</p>
+                  <p className="truncate text-[11px] text-subtle">{user.email}</p>
+                </div>
+              )}
+            </div>
+          )}
+          <button
+            type="button"
+            className="btn-secondary flex w-full items-center justify-center gap-2 !py-2"
+            onClick={logout}
+          >
+            <LogOut className="h-4 w-4" />
+            <span className={cn(!expanded && "md:sr-only")}>Выйти</span>
+          </button>
+          <button type="button" className="btn-secondary hidden w-full !py-2 md:block" onClick={toggle}>
             {expanded ? "Свернуть" : "≡"}
           </button>
         </div>

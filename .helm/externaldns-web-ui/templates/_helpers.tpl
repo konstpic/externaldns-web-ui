@@ -70,3 +70,13 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "externaldns-web-ui.frontendFullname" -}}
 {{- printf "%s-frontend" (include "externaldns-web-ui.fullname" .) -}}
 {{- end -}}
+
+{{- define "externaldns-web-ui.frontendUrl" -}}
+{{- if .Values.auth.frontendUrl -}}
+{{- .Values.auth.frontendUrl -}}
+{{- else if .Values.ingress.host -}}
+{{- printf "https://%s" .Values.ingress.host -}}
+{{- else -}}
+{{- "" -}}
+{{- end -}}
+{{- end -}}
