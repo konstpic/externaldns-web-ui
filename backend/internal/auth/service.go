@@ -47,7 +47,8 @@ func NewService(cfg Config) (*Service, error) {
 }
 
 func (s *Service) initOIDC(ctx context.Context) error {
-	provider, err := oidc.NewProvider(ctx, strings.TrimRight(s.cfg.IssuerURL, "/"))
+	issuer := strings.TrimRight(s.cfg.IssuerURL, "/") + "/"
+	provider, err := oidc.NewProvider(ctx, issuer)
 	if err != nil {
 		return err
 	}
