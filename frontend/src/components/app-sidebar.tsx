@@ -7,7 +7,7 @@ import {
   Menu,
   Network,
   Server,
-  Settings,
+  ShieldCheck,
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -83,7 +83,7 @@ export function AppSidebar() {
         <div className="space-y-1 border-t border-border/10 p-2">
           {user?.is_admin && (
             <NavLink
-              to="/admin/settings"
+              to="/admin"
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
@@ -93,8 +93,8 @@ export function AppSidebar() {
                 )
               }
             >
-              <Settings className="h-4 w-4 shrink-0" />
-              <span className={cn(!expanded && "md:sr-only")}>Настройки</span>
+              <ShieldCheck className="h-4 w-4 shrink-0" />
+              <span className={cn(!expanded && "md:sr-only")}>Админ</span>
             </NavLink>
           )}
           {user && (

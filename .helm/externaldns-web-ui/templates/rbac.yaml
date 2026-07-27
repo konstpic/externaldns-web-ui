@@ -7,14 +7,14 @@ metadata:
     {{- include "externaldns-web-ui.labels" . | nindent 4 }}
 rules:
   - apiGroups: [""]
-    resources: ["services"]
-    verbs: ["get", "list", "watch"]
+    resources: ["services", "namespaces"]
+    verbs: ["get", "list", "watch", "patch", "update"]
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get", "list", "watch", "patch", "update"]
   - apiGroups: ["externaldns.k8s.io"]
     resources: ["dnsendpoints"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: ["apps"]
     resources: ["deployments"]
     verbs: ["get", "list", "watch"]

@@ -116,7 +116,26 @@ kubectl apply -f argocd/apps/root-app.yaml
 
 ExternalDNS автоматически создаст DNS запись для Ingress по annotation `external-dns.alpha.kubernetes.io/hostname`.
 
-## RBAC
+## Admin (только для admin-ролей)
+
+- **Обзор** — статистика, ресурсы без DNS annotations
+- **Управление DNS** — create / **edit** / delete annotations и DNSEndpoint CRD
+- **Audit log** — журнал всех admin-операций
+- **Настройки** — OIDC и конфигурация приложения
+
+Admin API: `/api/v1/admin/*`
+
+| Method | Endpoint | Описание |
+|--------|----------|----------|
+| POST | `/annotate` | Создать annotation |
+| PUT | `/annotate` | Обновить hostname/TTL/internal |
+| GET | `/annotate?kind&namespace&name` | Текущие значения |
+| DELETE | `/annotate` | Удалить annotations |
+| POST | `/dnsendpoints` | Создать CRD |
+| PUT | `/dnsendpoints/{ns}/{name}` | Обновить CRD |
+| GET | `/dnsendpoints/{ns}/{name}` | Прочитать CRD |
+| DELETE | `/dnsendpoints/{ns}/{name}` | Удалить CRD |
+
 
 Chart создаёт ClusterRole с read-only доступом:
 

@@ -14,3 +14,7 @@ func claimsFromContext(ctx context.Context) *Claims {
 	claims, _ := ctx.Value(claimsKey).(*Claims)
 	return claims
 }
+
+func UserFromContext(ctx context.Context) *Claims {
+	return claimsFromContext(ctx)
+}

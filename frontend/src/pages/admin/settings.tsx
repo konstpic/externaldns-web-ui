@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Settings, Shield, KeyRound } from "lucide-react";
-import { getAdminSettings } from "@/lib/auth-api";
+import { getAdminSettings } from "@/lib/admin-api";
 import { ErrorState, FadeIn, LoadingState, PageHeader } from "@/components/ui";
 import { cn, pageShellClass } from "@/lib/utils";
 

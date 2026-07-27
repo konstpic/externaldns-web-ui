@@ -77,6 +77,21 @@ body {
     border-color: rgb(var(--primary) / 0.4);
     box-shadow: 0 0 0 2px rgb(var(--primary) / 0.15);
   }
+  .select-field {
+    @apply w-full cursor-pointer appearance-none rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-200;
+    color: rgb(var(--fg));
+    border: 1px solid rgb(var(--border) / var(--border-opacity));
+    background-color: rgb(var(--surface) / var(--surface-hover-opacity));
+  }
+  .select-field:focus {
+    border-color: rgb(var(--primary) / 0.4);
+    box-shadow: 0 0 0 2px rgb(var(--primary) / 0.15);
+  }
+  .checkbox-field {
+    @apply h-4 w-4 shrink-0 cursor-pointer rounded-md border;
+    border-color: rgb(var(--border) / calc(var(--border-opacity) + 0.06));
+    background-color: rgb(var(--surface) / var(--surface-hover-opacity));
+  }
   .badge {
     @apply inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-medium;
     background-color: rgb(var(--surface) / var(--surface-elevated-opacity));

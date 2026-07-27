@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/konstpic/externaldns-web-ui/backend/internal/audit"
 	"github.com/konstpic/externaldns-web-ui/backend/internal/auth"
 	"github.com/konstpic/externaldns-web-ui/backend/internal/handler"
 	"github.com/konstpic/externaldns-web-ui/backend/internal/k8s"
@@ -29,9 +30,12 @@ func main() {
 		log.Fatalf("kubernetes client: %v", err)
 	}
 
+	auditLog := audit.New(500)
+
 	mux := http.NewServeMux()
 	auth.RegisterRoutes(mux, authSvc)
 	handler.New(client, authSvc).Register(mux)
+	handler.NewAdmin(client, authSvc, auditLog).Register(mux)
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -61,7 +65,7 @@ func envOr(key, fallback string) string {
 func withCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
